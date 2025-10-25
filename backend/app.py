@@ -13,7 +13,7 @@ app = Flask(__name__, template_folder='templates')
 
 # Load model and labels
 MODEL_PATH = 'brain_mobilenet.h5'
-LABEL_MAP = '../label_map.json'
+LABEL_MAP = 'label_map.json'
 
 model = tf.keras.models.load_model(MODEL_PATH)
 with open(LABEL_MAP) as f:
