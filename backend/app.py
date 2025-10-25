@@ -52,8 +52,8 @@ def predict():
         file.save(tmp_path)
 
         # Preprocess image
-        #img = image.load_img(tmp_path, target_size=(224, 224))
-        img = image.load_img(tmp_path, target_size=(64, 64))
+        img = image.load_img(tmp_path, target_size=(224, 224))
+        
 
         img_arr = image.img_to_array(img) / 255.0
         img_arr = np.expand_dims(img_arr, axis=0)

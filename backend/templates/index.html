@@ -111,30 +111,38 @@
   </div>
 
   <script>
-    document.getElementById("upload-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const file = document.getElementById("photo").files[0];
-      if (!file) return;
+document.getElementById("upload-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const file = document.getElementById("photo").files[0];
+  if (!file) return;
 
-      const formData = new FormData();
-      formData.append("photo", file);
+  const formData = new FormData();
+  formData.append("photo", file);
 
-      const res = await fetch("/predict", { method: "POST", body: formData });
-      const data = await res.json();
+  try {
+    const res = await fetch("/predict", { method: "POST", body: formData });
+    const data = await res.json();
 
-      const resultDiv = document.getElementById("result");
-      const overlayImg = document.getElementById("overlay");
+    const resultDiv = document.getElementById("result");
+    const overlayImg = document.getElementById("overlay");
 
-      // ✅ Show probability only for "Tumor Detected"
-      if (data.prediction === "Tumor Detected" && data.probability) {
-        resultDiv.innerHTML = `✅ <b>${data.prediction}</b><br>Probability: ${data.probability}%`;
-      } else {
-        resultDiv.innerHTML = `✅ <b>${data.prediction}</b>`;
-      }
+    if (data.error) {
+      resultDiv.innerHTML = `❌ Error: ${data.error}`;
+      overlayImg.style.display = "none";
+    } else {
+      // Show prediction and probability safely
+      resultDiv.innerHTML = `✅ <b>${data.prediction || "Unknown"}</b>` +
+                            (data.probability ? `<br>Probability: ${data.probability}%` : "");
+      overlayImg.src = data.overlay || "";
+      overlayImg.style.display = data.overlay ? "block" : "none";
+    }
 
-      overlayImg.src = data.overlay;
-      overlayImg.style.display = "block";
-    });
-  </script>
+  } catch (err) {
+    document.getElementById("result").innerHTML = `❌ Error: ${err.message}`;
+    document.getElementById("overlay").style.display = "none";
+  }
+});
+</script>
+
 </body>
 </html>
